@@ -18,4 +18,5 @@ https://docs.unrealengine.com/ja/Programming/Tutorials/PlayerCamera/index.html
 	- ピッチの回転をアクタ全体でなく表示物だけにする？
 - 床から浮いている
 	- PlayerStartを下にずらせば一応床に合わせることは可能
-	- 物理で動かせないか試す
+	- 物理で動かせないか試す？
+		- キャラクタで行えないか？→別プロジェクトにする
