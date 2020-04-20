@@ -30,6 +30,9 @@ protected:
 
 	UCameraComponent* OurCamera;
 
+	// ピッチ回転用
+	USceneComponent* RotatePitchComponent;
+
 public:
 	// Sets default values for this pawn's properties
 	APawnWithCamera();

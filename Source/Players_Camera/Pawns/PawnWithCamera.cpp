@@ -16,9 +16,13 @@ APawnWithCamera::APawnWithCamera()
 	// ルートコンポーネント
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
+	// ピッチ回転用コンポーネント
+	RotatePitchComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RotatePitchComponent"));
+	RotatePitchComponent->SetupAttachment(RootComponent);
+
 	// バネコンポーネント
 	OurCameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSprintArm"));
-	OurCameraSpringArm->SetupAttachment(RootComponent);
+	OurCameraSpringArm->SetupAttachment(RotatePitchComponent);	// ルートでなくピッチを回転させるコンポーネントに入れる
 	// 初期位置
 	OurCameraSpringArm->SetRelativeLocationAndRotation(FVector(0.f, 0.f, 50.f), FRotator(-60.f, 0.f, 0.f));
 	// 長さ
@@ -70,10 +74,15 @@ void APawnWithCamera::MoveDirection(FVector2D Direction)
 
 void APawnWithCamera::MoveCamera(FVector2D CameraDirection)
 {
-	FRotator NewRotation = GetActorRotation();
-	NewRotation.Yaw += CameraDirection.X;
-	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + CameraDirection.Y, -80.f, -15.f);
-	SetActorRotation(NewRotation);
+	// アクタ全体をヨー回転
+	FRotator NewActorRotation = GetActorRotation();
+	NewActorRotation.Yaw += CameraDirection.X;
+	SetActorRotation(NewActorRotation);
+
+	// カメラ関係のみピッチ回転
+	FRotator NewPitchRotation = RotatePitchComponent->GetRelativeRotation();
+	NewPitchRotation.Pitch = FMath::Clamp(NewPitchRotation.Pitch + CameraDirection.Y, -20.f, 15.f);
+	RotatePitchComponent->SetRelativeRotation(NewPitchRotation);
 }
 
 void APawnWithCamera::ZoomIn()
