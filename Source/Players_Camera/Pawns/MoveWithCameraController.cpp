@@ -39,6 +39,10 @@ void AMoveWithCameraController::SetupInputComponent()
 	// カメラ
 	InputComponent->BindAxis("PitchCamera", this, &AMoveWithCameraController::PitchCamera);
 	InputComponent->BindAxis("YawCamera", this, &AMoveWithCameraController::YawCamera);
+
+	// ズーム
+	InputComponent->BindAction("ZoomIn", EInputEvent::IE_Pressed, this, &AMoveWithCameraController::ZoomIn);
+	InputComponent->BindAction("ZoomIn", EInputEvent::IE_Released, this, &AMoveWithCameraController::ZoomOut);
 }
 
 void AMoveWithCameraController::MoveForward(float AxisValue)
@@ -53,10 +57,33 @@ void AMoveWithCameraController::MoveRight(float AxisValue)
 
 void AMoveWithCameraController::PitchCamera(float AxisValue)
 {
-	// カメラピッチ呼び出し
+	CameraDirection.X = AxisValue;
 }
 
 void AMoveWithCameraController::YawCamera(float AxisValue)
 {
-	// カメラヨー呼び出し
+	CameraDirection.Y = AxisValue;
+}
+
+void AMoveWithCameraController::ZoomIn()
+{
+	auto PawnInterface = GetPawnInterface();
+	if (PawnInterface)PawnInterface->ZoomIn();
+}
+
+void AMoveWithCameraController::ZoomOut()
+{
+	auto PawnInterface = GetPawnInterface();
+	if (PawnInterface)PawnInterface->ZoomOut();
+}
+
+IPawnInterface* AMoveWithCameraController::GetPawnInterface()
+{
+	// あるときはインターフェースを返す
+	if (GetPawn<APawn>()->GetClass()->ImplementsInterface(UPawnInterface::StaticClass()))
+	{
+		return Cast<IPawnInterface>(GetPawn());
+	}
+	// ないときはnull
+	return nullptr;
 }

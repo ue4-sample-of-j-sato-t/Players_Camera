@@ -4,15 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "PawnInterface.h"
 #include "PawnWithCamera.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
-class PLAYERS_CAMERA_API APawnWithCamera : public APawn
+class PLAYERS_CAMERA_API APawnWithCamera : public APawn, public IPawnInterface
 {
 	GENERATED_BODY()
+
+private:
+	// ズームイン中か
+	bool bZoomingIn;
+	// ズームの因子
+	float ZoomFactor;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -35,4 +42,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
+	// IPawnInterface
+	virtual void MoveDirection(FVector2D Direction) override;
+	virtual void MoveCamera(FVector2D CameraDirection) override;
+	virtual void ZoomIn() override;
+	virtual void ZoomOut() override;
+
+private:
+	/**
+		ズーム処理
+		@note Tickから呼ぶ
+	*/
+	void Zooming(float DeltaTime);
 };

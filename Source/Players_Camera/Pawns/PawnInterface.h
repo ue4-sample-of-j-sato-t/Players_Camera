@@ -22,12 +22,15 @@ class PLAYERS_CAMERA_API IPawnInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	// 移動
-	virtual void MoveDirection(FVector Direction) = 0;
+	// ポーン移動
+	virtual void MoveDirection(FVector2D Direction) = 0;
 
-	// ピッチ
-	virtual void PitchCamera(float Pitch) = 0;
+	// カメラ移動
+	virtual void MoveCamera(FVector2D CameraDirection) = 0;
 
-	// ヨー
-	virtual void YawCamera(float Yaw) = 0;
+	// ズームイン
+	virtual void ZoomIn() = 0;
+
+	// ズームアウト
+	virtual void ZoomOut() = 0;
 };

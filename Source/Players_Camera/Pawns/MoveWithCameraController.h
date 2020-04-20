@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "PawnInterface.h"
 #include "MoveWithCameraController.generated.h"
 
 /**
@@ -14,9 +15,11 @@ class PLAYERS_CAMERA_API AMoveWithCameraController : public APlayerController
 {
 	GENERATED_BODY()
 private:
+	// 入力した移動量
+	FVector2D MoveDirection;
 
-	FVector MoveDirection;
-
+	// 入力されたカメラ移動
+	FVector2D CameraDirection;
 
 public:
 	AMoveWithCameraController();
@@ -38,4 +41,14 @@ private:
 
 	UFUNCTION()
 	void YawCamera(float AxisValue);
+
+	UFUNCTION()
+	void ZoomIn();
+
+	UFUNCTION()
+	void ZoomOut();
+
+	/// ポーンについているはずのインターフェースを取得
+	/// @return インターフェースポインタ（ない場合はnullptr）
+	IPawnInterface* GetPawnInterface();
 };

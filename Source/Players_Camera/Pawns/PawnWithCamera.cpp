@@ -5,6 +5,7 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Engine.h"
 
 // Sets default values
 APawnWithCamera::APawnWithCamera()
@@ -33,6 +34,10 @@ APawnWithCamera::APawnWithCamera()
 
 	// プレイヤー設定
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+
+	// パラメータ初期化
+	ZoomFactor = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +52,7 @@ void APawnWithCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Zooming(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -55,4 +61,45 @@ void APawnWithCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+void APawnWithCamera::MoveDirection(FVector2D Direction)
+{
+	// カメラ方向に合わせて回転
+	// 速さセット
+	// 移動
+}
+
+void APawnWithCamera::MoveCamera(FVector2D CameraDirection)
+{
+}
+
+void APawnWithCamera::ZoomIn()
+{
+	bZoomingIn = true;
+}
+
+void APawnWithCamera::ZoomOut()
+{
+	bZoomingIn = false;
+}
+
+void APawnWithCamera::Zooming(float DeltaTime)
+{
+	if (bZoomingIn)
+	{
+		ZoomFactor += DeltaTime / 0.5f;
+	}
+	else
+	{
+		ZoomFactor -= DeltaTime / 0.25f;
+	}
+	ZoomFactor = FMath::Clamp(ZoomFactor, 0.f, 1.f);
+
+	// FOVとスプリングアームを調整
+	OurCamera->FieldOfView = FMath::Lerp<float>(90.f, 60.f, ZoomFactor);
+	OurCameraSpringArm->TargetArmLength = FMath::Lerp<float>(400.f, 300.f, ZoomFactor);
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Cyan, TEXT("ZoomFactor = ") + FString::SanitizeFloat(ZoomFactor));
+}
+
 
