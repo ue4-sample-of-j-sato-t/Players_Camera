@@ -12,9 +12,18 @@ AMoveWithCameraController::AMoveWithCameraController()
 void AMoveWithCameraController::Tick(float DeltaTime)
 {
 	MoveDirection.Normalize();
-	// 移動呼び出し
+	auto PawnInterface = GetPawnInterface();
+	if (PawnInterface)
+	{
+		// 移動呼び出し
+		PawnInterface->MoveDirection(MoveDirection);
+
+		// 回転呼び出し
+		PawnInterface->MoveCamera(CameraDirection);
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Cyan, TEXT("Move direction -> ") + MoveDirection.ToString());
+	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Cyan, TEXT("Camera direction -> ") + CameraDirection.ToString());
 }
 
 void AMoveWithCameraController::SetupInputComponent()
@@ -37,8 +46,8 @@ void AMoveWithCameraController::SetupInputComponent()
 	InputComponent->BindAxis("MoveRight", this, &AMoveWithCameraController::MoveRight);
 
 	// カメラ
-	InputComponent->BindAxis("PitchCamera", this, &AMoveWithCameraController::PitchCamera);
-	InputComponent->BindAxis("YawCamera", this, &AMoveWithCameraController::YawCamera);
+	InputComponent->BindAxis("CameraPitch", this, &AMoveWithCameraController::PitchCamera);
+	InputComponent->BindAxis("CameraYaw", this, &AMoveWithCameraController::YawCamera);
 
 	// ズーム
 	InputComponent->BindAction("ZoomIn", EInputEvent::IE_Pressed, this, &AMoveWithCameraController::ZoomIn);
@@ -57,12 +66,12 @@ void AMoveWithCameraController::MoveRight(float AxisValue)
 
 void AMoveWithCameraController::PitchCamera(float AxisValue)
 {
-	CameraDirection.X = AxisValue;
+	CameraDirection.Y = AxisValue;
 }
 
 void AMoveWithCameraController::YawCamera(float AxisValue)
 {
-	CameraDirection.Y = AxisValue;
+	CameraDirection.X = AxisValue;
 }
 
 void AMoveWithCameraController::ZoomIn()

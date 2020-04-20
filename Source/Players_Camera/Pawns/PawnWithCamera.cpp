@@ -53,6 +53,7 @@ void APawnWithCamera::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	Zooming(DeltaTime);
+	Moving(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -64,13 +65,15 @@ void APawnWithCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void APawnWithCamera::MoveDirection(FVector2D Direction)
 {
-	// カメラ方向に合わせて回転
-	// 速さセット
-	// 移動
+	MovingDirection = Direction;
 }
 
 void APawnWithCamera::MoveCamera(FVector2D CameraDirection)
 {
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Yaw += CameraDirection.X;
+	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + CameraDirection.Y, -80.f, -15.f);
+	SetActorRotation(NewRotation);
 }
 
 void APawnWithCamera::ZoomIn()
@@ -100,6 +103,15 @@ void APawnWithCamera::Zooming(float DeltaTime)
 	OurCameraSpringArm->TargetArmLength = FMath::Lerp<float>(400.f, 300.f, ZoomFactor);
 
 	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Cyan, TEXT("ZoomFactor = ") + FString::SanitizeFloat(ZoomFactor));
+}
+
+void APawnWithCamera::Moving(float DeltaTime)
+{
+	MovingDirection = MovingDirection.GetSafeNormal() * 100.f;
+	FVector NewLocation = GetActorLocation();
+	NewLocation += GetActorForwardVector() * MovingDirection.X * DeltaTime;
+	NewLocation += GetActorRightVector() * MovingDirection.Y * DeltaTime;
+	SetActorLocation(NewLocation, true);
 }
 
 

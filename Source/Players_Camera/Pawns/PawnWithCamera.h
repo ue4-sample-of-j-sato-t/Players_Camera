@@ -21,6 +21,9 @@ private:
 	// ズームの因子
 	float ZoomFactor;
 
+	// 相対的な移動方向
+	FVector2D MovingDirection;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* OurCameraSpringArm;
@@ -55,4 +58,9 @@ private:
 		@note Tickから呼ぶ
 	*/
 	void Zooming(float DeltaTime);
+
+	/**
+		移動処理
+	*/
+	void Moving(float DeltaTime);
 };
